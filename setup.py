@@ -18,15 +18,7 @@ setup(
     license='Apache License 2.0',
     packages=find_packages(exclude=('tests', 'docs')),
     include_package_data=True,
-    install_requires=[
-        'click',
-        'ocrd >= 1.0.0b7',
-        'pandas',
-        'Pillow == 5.4.1',
-        'scikit-image',
-        'torch >= 1.2.0',
-        'torchvision',
-    ],
+    install_requires=open('requirements.txt').read().split('\n'),
     package_data={
         '': ['*.json', '*.tgc'],
     },

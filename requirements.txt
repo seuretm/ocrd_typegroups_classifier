@@ -1,1 +1,5 @@
-.
+ocrd >= 2.0.1
+pandas
+scikit-image
+torch >= 1.2.0
+torchvision
