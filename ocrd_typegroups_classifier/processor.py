@@ -31,11 +31,13 @@ class TypegroupsClassifierProcessor(Processor):
         ignore_type = ('Adornment', 'Book covers and other irrelevant data',
                        'Empty Pages', 'Woodcuts - Engravings')
 
-        self.log.debug('Processing: %s', self.input_files)
-        for (_, input_file) in enumerate(self.input_files):
+        for n, input_file in enumerate(self.input_files):
+            page_id = input_file.pageId or input_file.ID
+            self.log.info('Processing: %d / %s', n, page_id)
             pcgts = page_from_file(self.workspace.download_file(input_file))
-            image_url = pcgts.get_Page().imageFilename
-            pil_image = self.workspace.resolve_image_as_pil(image_url)
+            page = pcgts.get_Page()
+            pil_image, _, image_info = self.workspace.image_from_page(page, page_id)
+            # todo: use image_info.resolution
             result = classifier.run(pil_image, stride)
             score_sum = 0
             for typegroup in classifier.classMap.cl2id:
@@ -55,10 +57,10 @@ class TypegroupsClassifierProcessor(Processor):
                     normalised_score = max(0, score / score_sum)
                     result_map[normalised_score] = typegroup
             if noise_highscore > script_highscore:
-                pcgts.get_Page().set_primaryScript(None)
-                self.log.debug(
-                    'Detected only noise (such as empty page or book cover). noise_highscore=%s > script_highscore=%s',
-                    noise_highscore, script_highscore)
+                page.set_primaryScript(None)
+                self.log.warning(
+                    'Detected only noise on page %s. noise_highscore=%s > script_highscore=%s',
+                    page_id, noise_highscore, script_highscore)
             else:
                 for k in sorted(result_map, reverse=True):
                     intk = round(100*k)
@@ -68,17 +70,19 @@ class TypegroupsClassifierProcessor(Processor):
                         output = '%s, ' % output
                     output = '%s%s:%d' % (output, result_map[k], intk)
                 self.log.debug('Detected %s' % output)
-                page = pcgts.get_Page()
                 textStyle = page.get_TextStyle()
                 if not textStyle:
                     textStyle = TextStyleType()
                     page.set_TextStyle(textStyle)
                 textStyle.set_fontFamily(output)
-                ID = concat_padded(self.output_file_grp, input_file.ID)
+                file_id = input_file.ID.replace(self.input_file_grp, self.output_file_grp)
+                if file_id == input_file.ID:
+                    file_id = concat_padded(self.output_file_grp, n)
                 self.workspace.add_file(
-                    ID=ID,
+                    ID=file_id,
                     file_grp=self.output_file_grp,
+                    pageId=input_file.pageId,
                     mimetype=MIMETYPE_PAGE,
-                    local_filename="%s/%s" % (self.output_file_grp, ID),
+                    local_filename="%s/%s.xml" % (self.output_file_grp, file_id),
                     content=to_xml(pcgts)
                 )

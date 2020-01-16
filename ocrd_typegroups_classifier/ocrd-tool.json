@@ -11,6 +11,7 @@
       "steps": [
         "recognition/font-identification"
       ],
+      "input_file_grp": ["OCR-D-IMG"],
       "parameters": {
         "network": {
           "description": "The file name of the neural network to use, including sufficient path information",

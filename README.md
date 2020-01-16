@@ -2,7 +2,15 @@
 
 > Typegroups classifier for OCR
 
-## Quick setup
+## Installation
+
+### From PyPI
+
+```sh
+pip3 install ocrd_typegroup_classifier
+```
+
+### From source
 
 If needed, create a virtual environment for Python 3 (it was tested
 successfully with Python 3.7), activate it, and install ocrd.
@@ -14,13 +22,15 @@ pip3 install ocrd
 ```
 
 Enter in the folder containing the tool:
-```cd ocrd_typegroups_classifier/```
+
+```
+cd ocrd_typegroups_classifier/
+```
 
 Install the module and its dependencies
 
 ```
 make install
-make deps
 ```
 
 Finally, run the test:
