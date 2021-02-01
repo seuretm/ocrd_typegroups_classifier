@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.3.0",
   "git_url": "https://github.com/seuretm/ocrd_typegroups_classifier",
   "tools": {
     "ocrd-typegroups-classifier": {
@@ -11,11 +11,13 @@
       "steps": [
         "recognition/font-identification"
       ],
+      "input_file_grp": ["OCR-D-IMG"],
+      "output_file_grp": ["OCR-D-IMG-FONTS"],
       "parameters": {
         "network": {
           "description": "The file name of the neural network to use, including sufficient path information",
           "type": "string",
-          "required": true
+          "required": false
         },
         "stride": {
           "description": "Stride applied to the CNN on the image. Should be between 1 and 224. Smaller values increase the computation time.",

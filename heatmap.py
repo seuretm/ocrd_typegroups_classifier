@@ -210,7 +210,7 @@ def get_args():
     return args
 
 if __name__ == '__main__':
-    """ python grad_cam.py <path_to_image>
+    """ python heatmap.py <path_to_image>
     1. Loads an image with opencv.
     2. Preprocesses it for VGG19 and converts to a pytorch variable.
     3. Makes a forward pass to find the category index with the highest score,
